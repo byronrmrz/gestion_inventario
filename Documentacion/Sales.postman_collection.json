@@ -1,0 +1,41 @@
+{
+	"info": {
+		"_postman_id": "435f1051-0209-40e8-b129-d3fc2fc87606",
+		"name": "Sales",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24300725",
+		"_collection_link": "https://galactic-resonance-915675.postman.co/workspace/Api-StockMaster~8add68e9-2e50-42d2-87e2-e8eea0ea0b9b/collection/24300725-435f1051-0209-40e8-b129-d3fc2fc87606?action=share&source=collection_link&creator=24300725"
+	},
+	"item": [
+		{
+			"name": "Sale",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"user_id\": 3,\n  \"product_id\": 1,\n  \"warehouse_id\": 1,\n  \"quantity\": 100,\n  \"unitary_price\": 100.00\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3001/process_sale",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"process_sale"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

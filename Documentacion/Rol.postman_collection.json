@@ -1,0 +1,99 @@
+{
+	"info": {
+		"_postman_id": "8fc8f5c2-73be-4751-972c-73a659e36716",
+		"name": "Rol",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24300725",
+		"_collection_link": "https://galactic-resonance-915675.postman.co/workspace/Api-StockMaster~8add68e9-2e50-42d2-87e2-e8eea0ea0b9b/collection/24300725-8fc8f5c2-73be-4751-972c-73a659e36716?action=share&source=collection_link&creator=24300725"
+	},
+	"item": [
+		{
+			"name": "Get Rol",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"user_id\":\"2\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3001/getRoles",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"getRoles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Rol",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"UA\" //Administrador\n}\n\n{\n  \"name\": \"UO\" //Operador de inventarios\n}\n\n{\n    \"user_id\":\"2\",\n  \"name\": \"UV\" //Ventas\n}\n{\n  \"name\": \"UAD\" //Auditor\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3001/createRol",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"createRol"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Rol",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"sku\":\"p005\",\n    \"name\":\"tv\",\n    \"description\":\"TV LG Led Smart TV\",\n    \"price\":\"3000\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3001/deleteRol/1",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"deleteRol",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,155 @@
+{
+	"info": {
+		"_postman_id": "28bc7046-9170-45be-a9ab-ab10e9714a8b",
+		"name": "Users",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24300725",
+		"_collection_link": "https://galactic-resonance-915675.postman.co/workspace/Api-StockMaster~8add68e9-2e50-42d2-87e2-e8eea0ea0b9b/collection/24300725-28bc7046-9170-45be-a9ab-ab10e9714a8b?action=share&source=collection_link&creator=24300725"
+	},
+	"item": [
+		{
+			"name": "Create User",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\":\"2\",\n    \"name\":\"Nilson Gomez\",\n    \"email\":\"Niddgo@galileo.com\",\n    \"rol_id\":\"2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3001/createUser",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"createUser"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Users",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"user_id\":\"2\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3001/getAllUsers",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"getAllUsers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get user by Id",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3001/getUserById/3",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"getUserById",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\":\"Guadalupe Reyes\",\n    \"email\":\"Guaresmas@galileo.com\",\n    \"rol_id\":\"1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3001/updateUser/3",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"updateUser",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"sku\":\"p005\",\n    \"name\":\"tv\",\n    \"description\":\"TV LG Led Smart TV\",\n    \"price\":\"3000\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3001/deleteUser/2",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"deleteUser",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

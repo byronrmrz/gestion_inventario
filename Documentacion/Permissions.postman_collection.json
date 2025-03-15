@@ -1,0 +1,41 @@
+{
+	"info": {
+		"_postman_id": "7753985d-6d55-4058-ba09-46560d6a2b0b",
+		"name": "Permissions",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24300725",
+		"_collection_link": "https://galactic-resonance-915675.postman.co/workspace/Api-StockMaster~8add68e9-2e50-42d2-87e2-e8eea0ea0b9b/collection/24300725-7753985d-6d55-4058-ba09-46560d6a2b0b?action=share&source=collection_link&creator=24300725"
+	},
+	"item": [
+		{
+			"name": "Create Permissions",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "// {\n//   \"rol_id\": 1,\n//   \"accion\": [\n//     \"GESTIONAR_USUARIOS\",\n//     \"GESTIONAR_PRODUCTOS\",\n//     \"GESTIONAR_VENTAS\",\n//     \"GESTIONAR_ALMACENES\",\n//     \"GESTIONAR_INVENTARIO\",\n//     \"VER_REPORTES\"\n//   ]\n// }\n\n// {\n//   \"rol_id\": 2,\n//   \"accion\": [\n//     \"GESTIONAR_PRODUCTOS\",\n//     \"GESTIONAR_ALMACENES\",\n//     \"GESTIONAR_INVENTARIO\"\n//   ]\n// }\n\n{\n  \"rol_id\": 3,\n  \"accion\": [\n    \"GESTIONAR_VENTAS\"\n  ]\n}\n\n// {\n//   \"rol_id\": 4,\n//   \"accion\": [\n//     \"VER_REPORTES\"\n//   ]\n// }\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3001/createPermission",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"createPermission"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

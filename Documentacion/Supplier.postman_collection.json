@@ -1,0 +1,38 @@
+{
+	"info": {
+		"_postman_id": "69e4806b-eabd-4076-9cbd-82e3f0e19754",
+		"name": "Supplier",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24300725",
+		"_collection_link": "https://galactic-resonance-915675.postman.co/workspace/Api-StockMaster~8add68e9-2e50-42d2-87e2-e8eea0ea0b9b/collection/24300725-69e4806b-eabd-4076-9cbd-82e3f0e19754?action=share&source=collection_link&creator=24300725"
+	},
+	"item": [
+		{
+			"name": "Create Supplier",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"user_id\":\"2\",\n  \"name\": \"Proveedor Tech\",\n  \"contact\": \"Juan Pérez\",\n  \"phone\": \"555-1234\",\n  \"email\": \"proveedor@example.com\"\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3001/createSupplier",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"createSupplier"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
