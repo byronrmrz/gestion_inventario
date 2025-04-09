@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Productos</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Gestión de Productos</h1>
+        <a href="dashboard.html" class="btn btn-secondary mb-3">🏠 Volver al Inicio</a>
+
+
+        <!-- Formulario para Crear Producto -->
+        <div class="mb-4">
+            <h2>Crear Producto</h2>
+            <form id="createProductForm">
+                <div class="form-group">
+                    <label for="sku">SKU</label>
+                    <input type="text" class="form-control" id="sku" name="sku" required>
+                </div>
+                <div class="form-group">
+                    <label for="name">Nombre</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Descripción</label>
+                    <input type="text" class="form-control" id="description" name="description" required>
+                </div>
+                <div class="form-group">
+                    <label for="price">Precio</label>
+                    <input type="number" step="0.01" class="form-control" id="price" name="price" required>
+                </div>
+                <button type="submit" class="btn btn-success">Crear Producto</button>
+            </form>
+        </div>
+
+        <!-- Tabla para Mostrar Productos -->
+        <div class="mb-4">
+            <h2>Lista de Productos</h2>
+            <table class="table table-striped table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Product Id</th>
+                        <th>SKU</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Precio</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="productTableBody">
+                    <!-- Filas de productos se agregarán aquí dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('user_id');
+
+    if (!token || !userId) {
+        window.location.href = 'index.html';
+        return;
+    }
+
+    // Función para obtener todos los productos
+    function fetchProducts() {
+        fetch('http://localhost:3001/getProducts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ user_id: userId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data) {
+                const productTableBody = document.getElementById('productTableBody');
+                productTableBody.innerHTML = '';
+
+                data.forEach(product => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${product.product_id}</td>
+                        <td>${product.sku}</td>
+                        <td>${product.name}</td>
+                        <td>${product.description}</td>
+                        <td>${product.price}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="deleteProduct('${product.product_id}')">Eliminar</button>
+                        </td>
+                    `;
+                    productTableBody.appendChild(row);
+                });
+            } else {
+                alert('Error al obtener productos');
+            }
+        })
+        .catch(error => {
+            console.error('Error en la petición:', error);
+        });
+    }
+
+    // Llamar a la función para obtener productos al cargar la página
+    fetchProducts();
+
+    // Manejar el envío del formulario de creación de producto
+    document.getElementById('createProductForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const formData = {
+            // product_id: document.getElementById('product_id').value,
+            sku: document.getElementById('sku').value,
+            name: document.getElementById('name').value,
+            description: document.getElementById('description').value,
+            price: document.getElementById('price').value,
+            user_id: userId
+        };
+
+        fetch('http://localhost:3001/createProduct', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message == "Product created successfully") {
+                alert('Producto creado exitosamente');
+                location.reload()
+                fetchProducts(); 
+            } else {
+                alert('Error al crear producto');
+            }
+        })
+        .catch(error => {
+            console.error('Error en la petición:', error);
+        });
+    });
+
+    window.deleteProduct = function(product_id) {
+        if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
+            fetch(`http://localhost:3001/deleteProduct/${product_id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({"user_id": userId})
+
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Producto eliminado exitosamente');
+                    location.reload()
+                    fetchProducts(); 
+                } else {
+                    alert('Error al eliminar producto');
+                }
+            })
+            .catch(error => {
+                console.error('Error en la petición:', error);
+            });
+        }
+    }
+});
+
+</script>

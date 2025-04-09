@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Gestión de Almacenes</h1>
+        <div class="list-group">
+            <a href="gestionar-usuarios.html" class="list-group-item list-group-item-action users" style="display: none;"><i class="fas fa-users mr-2"></i> Gestionar Usuarios</a>
+            <a href="products.html" class="list-group-item list-group-item-action products" style="display: none;"><i class="fas fa-box mr-2"></i> Productos</a>
+            <a href="compras.html" class="list-group-item list-group-item-action compras" style="display: none;"><i class="fas fa-shopping-cart mr-2"></i> Compras</a>
+            <a href="ventas.html" class="list-group-item list-group-item-action ventas" style="display: none;"><i class="fas fa-cash-register mr-2"></i> Ventas</a>
+            <a href="proveedores.html" class="list-group-item list-group-item-action proveedores" style="display: none;"><i class="fas fa-truck mr-2"></i> Proveedores</a>
+            <a href="warehouse.html" class="list-group-item list-group-item-action almacen" style="display: none;"><i class="fas fa-warehouse mr-2"></i> Almacenes</a>
+            <a href="inventory.html" class="list-group-item list-group-item-action inventario" style="display: none;"><i class="fas fa-clipboard-list mr-2"></i> Inventario</a>
+            <a href="reports.html" class="list-group-item list-group-item-action reportes" style="display: none;"><i class="fas fa-clipboard-list mr-2"></i> Reportes</a>
+        </div>
+        <button id="logoutBtn" class="btn btn-danger mt-3">Cerrar Sesión</button>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('token');
+            const user_id = localStorage.getItem('user_id');
+console.log(token,user_id)
+            if (!token) {
+                window.location.href = 'index.html';
+                return;
+            }
+            console.log('user_id',user_id)
+
+            // Realizar la solicitud GET para obtener el rol del usuario
+            fetch(`http://localhost:3001/getUserById/${user_id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data) {
+                    const rol = data.rol_id;
+
+                    switch (rol) {
+                        case 1:
+                            // Mostrar todos los elementos
+                            document.querySelectorAll('.list-group-item').forEach(item => {
+                                item.style.display = 'block';
+                            });
+                            break;
+                        case 2:
+                            // Mostrar "Productos", "Almacenes" e "Inventario"
+                            document.querySelector('.products').style.display = 'block';
+                            document.querySelector('.almacen').style.display = 'block';
+                            document.querySelector('.inventario').style.display = 'block';
+                            break;
+                        case 3:
+                            // Mostrar "Ventas"
+                            document.querySelector('.ventas').style.display = 'block';
+                            break;
+                        case 4:
+                            // Mostrar "Reportes"
+                            document.querySelector('.reportes').style.display = 'block';
+                            break;
+                        default:
+                            console.error('Rol no reconocido');
+                    }
+                } else {
+                    console.error('Error al obtener el rol del usuario');
+                }
+            })
+            .catch(error => {
+                console.error('Error en la petición:', error);
+            });
+
+            // Manejar el clic del botón de cerrar sesión
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                // Eliminar el token y el user_id del localStorage
+                localStorage.removeItem('token');
+                localStorage.removeItem('user_id');
+                
+                // Redirigir al usuario a la página de inicio de sesión
+                window.location.href = 'index.html';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reporte por Ubicación</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container mt-5">
+    <h1 class="text-center mb-4">Reporte por Ubicación</h1>
+    <a href="dashboard.html" class="btn btn-secondary mb-3">🏠 Volver al Inicio</a>
+
+    <div class="mb-4 text-center">
+      <button class="btn btn-primary" id="generateUbicationReportBtn">Generar Reporte</button>
+    </div>
+    <div class="mb-4">
+      <h2>Resultado del Reporte</h2>
+      <div id="ubicationReport"></div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const token = localStorage.getItem('token');
+      const userId = localStorage.getItem('user_id');
+
+      if (!token || !userId) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      document.getElementById('generateUbicationReportBtn').addEventListener('click', function() {
+        fetch('http://localhost:3001/productByUbication', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ user_id: userId })
+        })
+        .then(response => response.json())
+        .then(data => {
+          const reportContainer = document.getElementById('ubicationReport');
+          reportContainer.innerHTML = ''; // Limpiar contenido previo
+
+          if (Array.isArray(data)) {
+            // Aplanar el array de arrays
+            const flatData = data.flat();
+
+            // Crear tabla
+            let tableHTML = `
+              <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                  <thead class="thead-dark">
+                    <tr>
+                      <th>ID Almacén</th>
+                      <th>Nombre Almacén</th>
+                      <th>Ubicación</th>
+                      <th>Código Producto</th>
+                      <th>Nombre Producto</th>
+                      <th>Cantidad</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+            `;
+
+            flatData.forEach(item => {
+              tableHTML += `
+                <tr>
+                  <td>${item.ID_Almacen}</td>
+                  <td>${item.Nombre_Almacen}</td>
+                  <td>${item.Ubicacion}</td>
+                  <td>${item.Codigo_Producto}</td>
+                  <td>${item.Nombre_Producto}</td>
+                  <td>${item.Cantidad}</td>
+                </tr>
+              `;
+            });
+
+            tableHTML += `
+                  </tbody>
+                </table>
+              </div>
+            `;
+
+            reportContainer.innerHTML = tableHTML;
+          } else {
+            reportContainer.innerHTML = '<p class="text-danger">No se pudo generar el reporte.</p>';
+          }
+        })
+        .catch(error => {
+          console.error('Error en la petición:', error);
+          document.getElementById('ubicationReport').innerHTML = '<p class="text-danger">Error al cargar los datos.</p>';
+        });
+      });
+    });
+  </script>
+</body>
+</html>

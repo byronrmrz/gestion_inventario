@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Gestión de Usuarios</h1>
+        <a href="dashboard.html" class="btn btn-secondary mb-3">🏠 Volver al Inicio</a>
+
+        <!-- Tabla de Usuarios -->
+        <div class="mb-4">
+            <h2>Mostrar Usuarios</h2>
+            <table class="table table-striped table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>User ID</th>
+                        <th>Nombre</th>
+                        <th>Correo Electrónico</th>
+                        <th>Rol ID</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="userTableBody">
+                    <!-- Filas de usuarios se agregarán aquí dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Formulario para Actualizar Usuario -->
+        <div class="mb-4">
+            <h2>Actualizar Usuario</h2>
+            <form id="updateUserForm">
+                <input type="hidden" id="userId" name="user_id">
+                <div class="form-group">
+                    <label for="userName">Nombre</label>
+                    <input type="text" class="form-control" id="userName" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="userEmail">Correo Electrónico</label>
+                    <input type="email" class="form-control" id="userEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="userRol">Rol ID</label>
+                    <input type="number" class="form-control" id="userRol" name="rol_id" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Actualizar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- <script src="user_management.js"></script> -->
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+
+
+<script>
+        const User = localStorage.getItem("user_id");
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        window.location.href = 'index.html';
+        return;
+    }
+
+    const userTableBody = document.getElementById('userTableBody');
+
+    // Función para obtener todos los usuarios
+    function fetchUsers() {
+        fetch('http://localhost:3001/getAllUsers', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body : JSON.stringify({"user_id":User}) 
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data) {
+                console.log('succes')
+                userTableBody.innerHTML = '';
+
+                // Mostrar usuarios en la tabla
+                data.forEach(user => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${user.user_id}</td>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td>${user.rol_id}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm" onclick="loadUserForUpdate(${user.user_id}, '${user.name}', '${user.email}', ${user.rol_id})">Actualizar</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.user_id})">Eliminar</button>
+                        </td>
+                    `;
+                    userTableBody.appendChild(row);
+                });
+            } else {
+                alert('Error al obtener usuarios');
+            }
+        })
+        .catch(error => {
+            console.error('Error en la petición:', error);
+        });
+    }
+
+    fetchUsers();
+});
+
+function loadUserForUpdate(userId, name, email, rolId) {
+    document.getElementById('userId').value = userId;
+    document.getElementById('userName').value = name;
+    document.getElementById('userEmail').value = email;
+    document.getElementById('userRol').value = rolId;
+}
+
+document.getElementById('updateUserForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    const user_id = document.getElementById('userId').value;
+
+    const formData = {
+        user_id : User,
+        name: document.getElementById('userName').value,
+        email: document.getElementById('userEmail').value,
+        rol_id: document.getElementById('userRol').value
+    };
+
+    fetch(`http://localhost:3001/updateUser/${user_id}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data) {
+            alert('Usuario actualizado exitosamente');
+                location.reload()
+            fetchUsers();
+        } else {
+            alert('Error al actualizar usuario');
+        }
+    })
+    .catch(error => {
+        console.error('Error en la petición:', error);
+    });
+});
+
+function deleteUser(userId) {
+    if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
+        fetch(`http://localhost:3001/deleteUser/${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            },
+            body : JSON.stringify({"user_id":User}) 
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message == "User deleted successfully") {
+                alert('Usuario eliminado exitosamente');
+                location.reload()
+                fetchUsers();
+            } else {
+                alert('Error al eliminar usuario');
+            }
+        })
+        .catch(error => {
+            console.error('Error en la petición:', error);
+        });
+    }
+}
+
+</script>
