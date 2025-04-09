@@ -31,12 +31,10 @@
                     </tr>
                 </thead>
                 <tbody id="inventoryTableBody">
-                    <!-- Filas de inventario se agregarán aquí dinámicamente -->
                 </tbody>
             </table>
         </div>
 
-        <!-- Sección para Mostrar el Reporte de Inventario -->
         <div class="mb-4">
             <h2>Reporte de Inventario</h2>
             <div id="inventoryReport" class="border p-3"></div>
@@ -96,10 +94,8 @@
             });
         }
 
-        // Llamar a la función para obtener el inventario al cargar la página
         fetchInventory();
 
-        // Manejar el clic del botón para generar el reporte de inventario
         document.getElementById('generateReportBtn').addEventListener('click', function() {
             fetch('http://localhost:3001/getInventoryReport', {
                 method: 'POST',
@@ -167,7 +163,7 @@
                 .then(data => {
                     if (data) {
                         alert('Ítem del inventario eliminado exitosamente');
-                        fetchInventory(); // Recargar la tabla de inventario
+                        fetchInventory(); 
                     } else {
                         alert('Error al eliminar el ítem del inventario');
                     }
