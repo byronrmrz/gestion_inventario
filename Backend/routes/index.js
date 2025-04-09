@@ -1,16 +1,33 @@
 var express = require('express');
 var router = express.Router();
+const jwt = require("jsonwebtoken");
+
+
+const authenticateToken = ( req, res, next ) => {
+  const token = req.header('Authorization');
+  if (!token) return res.status(401).send('Acceso denegado, no se proporcionó token');
+  try {
+    const tokenWithoutBearer = token.replace("Bearer","").trim();;
+    const verified= jwt.verify(tokenWithoutBearer, process.env.SECRET_KEY);
+    req.user = verified;
+    next();
+  }catch(error){
+    console.error('el error: ',error);
+    return res.status(403).send('Acceso denegado, token invalido o expirado');
+  }
+}
+
 // const Stock = require('../models/StockMaster');
-const { createProduct, getProducts, deleteProducts, } = require('../controllers/productController'); 
+const { createProduct, getProducts, deleteProducts,productByUbication } = require('../controllers/productController'); 
 const { createWarehouse, getWarehouse, deleteWarehouse, } = require('../controllers/warehouseController'); 
 const { addInventoryItem,getinventory, deleteInventoryItem } = require('../controllers/inventoryController');
 const { createRol, getRoles, deleteRol} = require('../controllers/rolController');
 const { createUser, getAllUsers, getUserById, updateUser, deleteUser} = require('../controllers/userController');
 const { createPermission, checkPermission} = require('../controllers/permissionController');
-const { processSale} = require('../controllers/salesDetailController');
+const { processSale, salesReport} = require('../controllers/salesDetailController');
 const { processPurchase} = require('../controllers/purchaseController');
-const { createSupplier} = require('../controllers/supplierController');
-const { getInventoryReport } = require("../controllers/getReportController");
+const { createSupplier, getSupplier} = require('../controllers/supplierController');
+const { getInventoryReport,getSalesReportByYear } = require("../controllers/getReportController");
 
 
 
@@ -39,21 +56,28 @@ router.get('/stock',async(req, res) => {
   }
 });
 
+
+
 //NOTE - Endpoints de productos
-router.post("/createProduct", checkPermission("GESTIONAR_PRODUCTOS"), createProduct);
-router.get("/getProducts", checkPermission("GESTIONAR_PRODUCTOS"), getProducts);
+router.post("/createProduct", authenticateToken,checkPermission("GESTIONAR_PRODUCTOS"), createProduct);
+router.post("/getProducts", authenticateToken,checkPermission("GESTIONAR_PRODUCTOS"), getProducts);
 router.delete("/deleteProduct/:product_id", checkPermission("GESTIONAR_PRODUCTOS"), deleteProducts);
+router.post("/productByUbication", checkPermission("GESTIONAR_PRODUCTOS"), productByUbication);
+
 
 //NOTE - Endpoints de almacen
 router.post("/createWarehouse", checkPermission("GESTIONAR_ALMACENES"), createWarehouse);
-router.get("/getWarehouse", checkPermission("GESTIONAR_ALMACENES"), getWarehouse);
+router.post("/getWarehouse", checkPermission("GESTIONAR_ALMACENES"), getWarehouse);
 router.delete("/deleteWarehouse/:warehouse_id", checkPermission("GESTIONAR_ALMACENES"), deleteWarehouse);
 
 //NOTE - Endpoints de inventario
 router.post("/addInventoryItem", checkPermission("GESTIONAR_INVENTARIO"), addInventoryItem);
-router.get("/getInventory", checkPermission("GESTIONAR_INVENTARIO"), getinventory);
+router.post("/getInventory", checkPermission("VER_REPORTES"), getinventory);
 router.delete("/deleteInventoryItem/:product_id/:warehouse_id", checkPermission("GESTIONAR_INVENTARIO"), deleteInventoryItem);
-
+router.post("/getInventoryReport", checkPermission("VER_REPORTES"),getInventoryReport);
+router.post("/getSalesReportByYear", checkPermission("VER_REPORTES"),getSalesReportByYear);
+router.post("/getSalesReportByYear", checkPermission("VER_REPORTES"),getSalesReportByYear);
+router.post('/salesReport',checkPermission("VER_REPORTES"), salesReport);
 
 //NOTE - Endpoints de roles
 router.post('/createRol',checkPermission("GESTIONAR_USUARIOS"), createRol);
@@ -62,21 +86,21 @@ router.delete('/deleteRol/:rol_id',checkPermission("GESTIONAR_USUARIOS"),deleteR
 
 //NOTE - Endpoints de usuarios
 router.post("/createUser", checkPermission("GESTIONAR_USUARIOS"), createUser);
-router.get("/getAllUsers", checkPermission("GESTIONAR_USUARIOS"), getAllUsers);
-router.get("/getUserById/:id", checkPermission("GESTIONAR_USUARIOS"), getUserById);
+router.post("/getAllUsers", checkPermission("GESTIONAR_USUARIOS"), getAllUsers);
+router.get("/getUserById/:id", getUserById);
 router.post("/updateUser/:id", checkPermission("GESTIONAR_USUARIOS"), updateUser);
 router.delete("/deleteUser/:id", checkPermission("GESTIONAR_USUARIOS"), deleteUser);
 
 //NOTE - Endpoints de permisos
-router.post('/createPermission', createPermission);
+router.post('/createPermission',checkPermission("GESTIONAR_USUARIOS"), createPermission);
 
-router.post('/process_Sale', processSale);
+//NOTE - Endpoints de Ventas
+router.post('/process_Sale',  checkPermission("GESTIONAR_VENTAS"),processSale);
 
-router.post('/createSupplier', createSupplier);
 
-router.post('/processPurchase', processPurchase);
-
-router.get("/getInventoryReport", getInventoryReport);
-
+//NOTE - Endpoints de Proveedores
+router.post('/createSupplier',checkPermission("GESTIONAR_INVENTARIO"), createSupplier);
+router.post('/getSupplier',checkPermission("GESTIONAR_INVENTARIO"), getSupplier);
+router.post('/processPurchase',checkPermission("GESTIONAR_INVENTARIO"), processPurchase);
 
 module.exports = router;

@@ -1,5 +1,7 @@
 const Product = require("../models/Product");
 const { create } = require("../models/StockMaster");
+const sequelize = require("../models/db");
+
 
 const createProduct = async (req, res) => {
   try {
@@ -44,4 +46,22 @@ const deleteProducts = async (req, res) => {
   }
 };
 
-module.exports = { createProduct, getProducts, deleteProducts };
+const productByUbication = async (req, res) => {
+  try {
+    const userId = req.user_id;
+    const productosPorUbicacion = await sequelize.query(
+      'SELECT * FROM vista_productos_por_ubicacion',
+      {
+        type: sequelize.QueryTypes.RAW,
+      }
+    );
+
+    res.json(productosPorUbicacion);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener productos por ubicación' });
+  }
+};
+
+
+module.exports = { createProduct, getProducts, deleteProducts,productByUbication };

@@ -14,6 +14,10 @@ const Supplier = sequelize.define(
       type: DataTypes.STRING(100),
       allowNull: false,
     },
+    contact_person: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+    },
     phone: {
       type: DataTypes.STRING(20),
       allowNull: true,
